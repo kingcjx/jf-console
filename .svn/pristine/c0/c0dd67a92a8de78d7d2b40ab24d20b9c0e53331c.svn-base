@@ -1,0 +1,58 @@
+package com.atguigu.jf.console.login.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.atguigu.jf.console.baseapi.user.SysFuncMapper;
+import com.atguigu.jf.console.baseapi.user.SysOpMapper;
+import com.atguigu.jf.console.login.service.LoginService;
+import com.atguigu.jf.console.user.bean.bo.SysFuncBean;
+import com.atguigu.jf.console.user.bean.pojo.SysOp;
+
+@Service
+public class LoginServiceImpl implements LoginService {
+	@Autowired
+	private SysOpMapper sysOpMapper;
+	
+	@Autowired
+	private SysFuncMapper sysFuncMapper;
+
+	@Override
+	public SysOp getLogin(String loginCode, String passWord) throws Exception {
+		SysOp sysOp = new SysOp();
+		sysOp.setLoginCode(loginCode);
+		sysOp.setLoginPasswd(passWord);
+		SysOp sysOpFromDB = sysOpMapper.selectSysOpByUnameAndPwd(sysOp);
+
+		return sysOpFromDB;
+	}
+
+	@Override
+	public List<SysFuncBean> getMenu(Long opId) throws Exception {
+		// 通过opid获得的SysFunc对象集合
+		List<SysFuncBean> list = sysFuncMapper.selectMenuList(opId);
+		//菜单list
+		List<SysFuncBean> menuList = new ArrayList<>();
+		// 遍历SysFun集合对象
+		for (int i = 0; i < list.size(); i++) {
+			// 获得每个SysFunc对应的childern元素集合
+			SysFuncBean parentSysFunc = list.get(i);
+				if(parentSysFunc.getFuncLevel().equals(new Short("1"))){
+				List<SysFuncBean> childrenList = new ArrayList<>();
+				for (int j = 0; j < list.size(); j++) {
+					//获得子节点元素
+					 SysFuncBean childrenSysFunc = list.get(j);
+					 if (parentSysFunc.getFuncId().equals(childrenSysFunc.getSupFuncId())) {
+							childrenList.add(childrenSysFunc);
+						}
+					}
+				parentSysFunc.setChildren(childrenList);
+				menuList.add(parentSysFunc);
+			}
+		}
+		return menuList;
+	}
+}

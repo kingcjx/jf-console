@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.jf.console.baseapi.item.MallCatMapper">
+  <resultMap id="BaseResultMap" type="com.atguigu.jf.console.item.bean.pojo.MallCat">
+    <id column="MALL_CAT_ID" jdbcType="DECIMAL" property="mallCatId" />
+    <result column="SUP_MALL_CAT_ID" jdbcType="DECIMAL" property="supMallCatId" />
+    <result column="MALL_CAT_CODE" jdbcType="VARCHAR" property="mallCatCode" />
+    <result column="MALL_CAT_NAME" jdbcType="VARCHAR" property="mallCatName" />
+    <result column="MALL_CAT_DESC" jdbcType="VARCHAR" property="mallCatDesc" />
+    <result column="MALL_CAT_PROMOTION" jdbcType="VARCHAR" property="mallCatPromotion" />
+    <result column="MALL_CAT_LEVEL" jdbcType="DECIMAL" property="mallCatLevel" />
+    <result column="MALL_CAT_LVL_PATH" jdbcType="VARCHAR" property="mallCatLvlPath" />
+    <result column="MALL_CAT_ORDER" jdbcType="DECIMAL" property="mallCatOrder" />
+    <result column="MALL_CAT_PIC_URL" jdbcType="VARCHAR" property="mallCatPicUrl" />
+    <result column="MALL_CAT_LEAF_FLAG" jdbcType="DECIMAL" property="mallCatLeafFlag" />
+    <result column="MALL_CAT_STATE" jdbcType="DECIMAL" property="mallCatState" />
+    <result column="DATA_STATE" jdbcType="DECIMAL" property="dataState" />
+    <result column="CREATOR" jdbcType="DECIMAL" property="creator" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="MODIFYER" jdbcType="DECIMAL" property="modifyer" />
+    <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  
+</mapper>

@@ -1,0 +1,14 @@
+package com.atguigu.jf.console.baseapi.evaluation;
+
+import java.util.List;
+import java.util.Map;
+
+import com.atguigu.jf.console.evaluation.bean.pojo.Evaluation;
+
+public interface EvaluationMapper {
+	List<Evaluation> getEvaluationList(Map<String,Object> map);
+
+	Evaluation getInfoEvaluation(Evaluation evaluation);
+
+	void updateEvaluateStatus(Evaluation evaluation);
+}

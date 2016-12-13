@@ -1,0 +1,123 @@
+package com.atguigu.jf.console.user.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.atguigu.jf.console.user.bean.bo.SysFuncChkBean;
+import com.atguigu.jf.console.user.bean.pojo.SysOp;
+
+public interface UserService {
+	/**
+	 * 
+	 * @方法名: 获取总记录数
+	 * @功能描述: TODO(这里用一句话描述这个方法的作用)  
+	 * @param sysOp
+	 * @return
+	 * @throws Exception
+	 * @作者  cjx
+	 * @日期 2016年11月8日
+	 */
+	int seletctTotalCount(SysOp sysOp) throws Exception;
+	/**
+	 * 
+	 * @方法名: selectSysOpList  
+	 * @功能描述: 获得带分页的sysOp List集合
+	 * @param start
+	 * @param limit
+	 * @param sysOp
+	 * @return
+	 * @throws Exception
+	 * @作者  cjx
+	 * @日期 2016年11月8日
+	 */
+	List<SysOp> selectSysOpList(int start, int limit, SysOp sysOp)throws Exception;
+	
+	/**
+	 * 
+	 * @方法名: insertUser  
+	 * @功能描述: 添加用户
+	 * @param sysOp
+	 * @return
+	 * @作者  cjx
+	 * @日期 2016年11月8日
+	 */
+	int insertUser(SysOp sysOp) throws Exception;
+	/**
+	 * 
+	 * @方法名: updateByPrimaryKey  
+	 * @功能描述: 修改用户
+	 * @param sysOp
+	 * @return
+	 * @throws Exception
+	 * @作者  cjx
+	 * @日期 2016年11月8日
+	 */
+	int updateByPrimaryKey(SysOp sysOp) throws Exception;
+	
+	/**
+	 * 
+	 * @方法名: selectByPrimaryKey  
+	 * @功能描述: 根据ID查询对应sysOp对象
+	 * @param opId
+	 * @return
+	 * @作者  cjx
+	 * @日期 2016年11月8日
+	 */
+	  SysOp selectByPrimaryKey(Long opId)throws Exception;
+	  
+	  /**
+	   * 
+	   * @方法名: deleteUser  
+	   * @功能描述: 删除用户方法
+	   * @param opId
+	   * @return
+	   * @作者  cjx
+	   * @日期 2016年11月8日
+	   */
+	int deleteUser(Long opId)throws Exception;
+	/**
+	 * 
+	 * @方法名: selectSysOpListPageHelper  
+	 * @功能描述: 使用pagehelper插件进行分页
+	 * @param map
+	 * @return
+	 * @throws Exception
+	 * @作者  cjx
+	 * @日期 2016年11月9日
+	 */
+	List<SysOp> selectSysOpListPageHelper(Map<String, Object> map) throws Exception;
+	
+    /**
+     * 
+     * @方法名: selectRoleMenuList  
+     * @功能描述: 查询opId对应的 SysFuncBean对象（opId->roleId->funcId）
+     * @param opId
+     * @return
+     * @throws Exception
+     * @作者  cjx
+     * @日期 2016年11月10日
+     */
+    List<SysFuncChkBean> selectRoleMenuList(Map<String,Object> map) throws Exception;
+    /**
+     * 
+     * @方法名: getOpIdByRoleId  
+     * @功能描述: 通过roleId获得opId
+     * @param roleId
+     * @return
+     * @作者  cjx
+     * @日期 2016年11月10日
+     */
+    List<SysFuncChkBean> getOpIdByRoleId(Map<String,Object> map);
+   
+	
+	/**
+	 * 
+	 * @方法名: getProviderByName  
+	 * @功能描述: 根据名称查询供应商
+	 * @param map
+	 * @return
+	 * @作者  cjx
+	 * @日期 2016年11月11日
+	 */
+	 SysOp getProviderByName(Map<String, Object> map) throws Exception;
+}

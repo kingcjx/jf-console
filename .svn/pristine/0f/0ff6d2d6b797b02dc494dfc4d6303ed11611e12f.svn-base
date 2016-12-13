@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.jf.console.baseapi.role.RoleMapper" >
+  <resultMap id="BaseResultMap" type="com.atguigu.jf.console.role.bean.pojo.Role" >
+    <id column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+    <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+    <result column="ROLE_DESC" property="roleDesc" jdbcType="VARCHAR" />
+    <result column="DATA_STATE" property="dataState" jdbcType="DECIMAL" />
+    <result column="CREATOR" property="creator" jdbcType="DECIMAL" />
+    <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="MODIFIER" property="modifier" jdbcType="DECIMAL" />
+    <result column="MODIFY_DATE" property="modifyDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="SysOpResultMap" type="com.atguigu.jf.console.user.bean.pojo.SysOp" >
+    <id column="OP_ID" property="opId" jdbcType="DECIMAL" />
+    <result column="OP_NAME" property="opName" jdbcType="VARCHAR" />
+    <result column="OP_CODE" property="opCode" jdbcType="VARCHAR" />
+    <result column="OP_KIND" property="opKind" jdbcType="DECIMAL" />
+    <result column="OP_PIC" property="opPic" jdbcType="VARCHAR" />
+    <result column="MOBILE_NO" property="mobileNo" jdbcType="VARCHAR" />
+    <result column="EMAIL_ADRESS" property="emailAdress" jdbcType="VARCHAR" />
+    <result column="LOGIN_CODE" property="loginCode" jdbcType="VARCHAR" />
+    <result column="LOGIN_PASSWD" property="loginPasswd" jdbcType="VARCHAR" />
+    <result column="LOCK_FLAG" property="lockFlag" jdbcType="DECIMAL" />
+    <result column="DATA_STATE" property="dataState" jdbcType="DECIMAL" />
+    <result column="CREATOR" property="creator" jdbcType="DECIMAL" />
+    <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="MODIFIER" property="modifier" jdbcType="DECIMAL" />
+    <result column="MODIFY_DATE" property="modifyDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+   <sql id="Base_Column_List" >
+    ROLE_ID, ROLE_NAME, ROLE_DESC, DATA_STATE, CREATOR, CREATE_DATE, MODIFIER, MODIFY_DATE
+  </sql>
+    <sql id="Syso_Column_List" >
+    OP_ID, OP_NAME, OP_CODE, OP_KIND, OP_PIC, MOBILE_NO, EMAIL_ADRESS, LOGIN_CODE, LOGIN_PASSWD, 
+    LOCK_FLAG, DATA_STATE, CREATOR, CREATE_DATE, MODIFIER, MODIFY_DATE
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sys_role
+    where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.atguigu.jf.console.role.bean.pojo.Role" >
+    insert into sys_role (ROLE_ID, ROLE_NAME, ROLE_DESC, 
+      DATA_STATE, CREATOR, CREATE_DATE, 
+      MODIFIER, MODIFY_DATE)
+    values (#{roleId,jdbcType=DECIMAL}, #{roleName,jdbcType=VARCHAR}, #{roleDesc,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=DECIMAL}, #{creator,jdbcType=DECIMAL}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{modifier,jdbcType=DECIMAL}, #{modifyDate,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.atguigu.jf.console.role.bean.pojo.Role" >
+    update sys_role
+    set ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+      ROLE_DESC = #{roleDesc,jdbcType=VARCHAR},
+      DATA_STATE = #{dataState,jdbcType=DECIMAL},
+      CREATOR = #{creator,jdbcType=DECIMAL},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      MODIFIER = #{modifier,jdbcType=DECIMAL},
+      MODIFY_DATE = #{modifyDate,jdbcType=TIMESTAMP}
+    where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select ROLE_ID, ROLE_NAME, ROLE_DESC, DATA_STATE, CREATOR, CREATE_DATE, MODIFIER, 
+    MODIFY_DATE
+    from sys_role
+    where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select ROLE_ID, ROLE_NAME, ROLE_DESC, DATA_STATE, CREATOR, CREATE_DATE, MODIFIER, 
+    MODIFY_DATE
+    from sys_role
+  </select>
+  <!--获得分页角色对象 -->
+  <select id="selectSysOpRoleListPageHelper" resultMap="BaseResultMap" parameterType="java.util.Map">
+  		SELECT 
+		<include refid="Base_Column_List"/>
+ 		FROM sys_role s 
+  		WHERE DATA_STATE=1 
+  	<if test="roleId != null" >
+       and sr.ROLE_ID = #{roleId,jdbcType=DECIMAL}
+     </if>
+ 	<if test="roleName != null" >
+       and ROLE_NAME = #{roleName,jdbcType=VARCHAR}
+     </if>
+      </select>
+ <!--根据roleId删除sys_role_func中的关联数据-->
+  <!-- <update id="deleteSysRoleFuncByRoleId"  parameterType="java.util.Map">
+ 	UPDATE sys_role_func 
+ 	SET data_state = 0 WHERE role_id=#{roleId}
+ </update> -->
+  <!--根据roleId删除sys_role_func中的关联数据-->
+ <delete id="deleteSysRoleFuncByRoleId" parameterType="java.util.Map">
+ 	DELETE   from sys_role_func
+ 	where role_id = #{roleId}
+ </delete>
+ 
+  <insert id="inertBatchSysRoleFunc" parameterType="java.util.List" >
+ insert into sys_role_func
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+ ROLE_FUNC_ID, ROLE_ID, FUNC_ID, NOTES, DATA_STATE, CREATOR, CREATE_DATE, MODIFIER, MODIFY_DATE
+    </trim>
+ values
+    <foreach collection="list" item="item" index="index" separator="," >
+       <trim prefix="(" suffix=")" suffixOverrides="," >
+		 nextVal('sys_role_func'),
+		 #{item.roleId,jdbcType=DECIMAL},
+		 #{item.funcId,jdbcType=DECIMAL},
+		 #{item.notes,jdbcType=VARCHAR},
+		 1,
+		 #{item.creator,jdbcType=DECIMAL},
+		 now(),
+		 #{item.modifier,jdbcType=DECIMAL},
+		 #{item.modifyDate,jdbcType=TIMESTAMP},
+         </trim>
+    </foreach>
+   </insert>
+</mapper>

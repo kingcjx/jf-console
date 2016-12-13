@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.jf.console.baseapi.user.SysFuncChkMapper" >
+  <resultMap id="BaseResultMap" type="com.atguigu.jf.console.user.bean.bo.SysFuncChkBean" >
+    <id column="FUNC_ID" property="funcId" jdbcType="DECIMAL" />
+    <result column="FUNC_LEVEL" property="funcLevel" jdbcType="DECIMAL" />
+    <result column="OP_ID" property="opId"  jdbcType="DECIMAL" />
+    <result column="FUNC_CODE" property="funcCode" jdbcType="VARCHAR" />
+    <result column="SUP_FUNC_ID" property="supFuncId" jdbcType="VARCHAR" />
+    <result column="FUNC_NAME" property="funcName" jdbcType="VARCHAR" />
+    <result column="FUNC_ORDER" property="funcOrder" jdbcType="DECIMAL" />
+    <result column="FUNC_URL" property="funcUrl" jdbcType="VARCHAR" />
+    <result column="FUNC_IMG" property="funcImg" jdbcType="VARCHAR" />
+    <result column="checked" property="checked" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="SysOpResultMap" type="com.atguigu.jf.console.user.bean.pojo.SysOp" >
+    <id column="OP_ID" property="opId" jdbcType="DECIMAL" />
+    <result column="OP_NAME" property="opName" jdbcType="VARCHAR" />
+    <result column="OP_CODE" property="opCode" jdbcType="VARCHAR" />
+    <result column="OP_KIND" property="opKind" jdbcType="DECIMAL" />
+    <result column="OP_PIC" property="opPic" jdbcType="VARCHAR" />
+    <result column="MOBILE_NO" property="mobileNo" jdbcType="VARCHAR" />
+    <result column="EMAIL_ADRESS" property="emailAdress" jdbcType="VARCHAR" />
+    <result column="LOGIN_CODE" property="loginCode" jdbcType="VARCHAR" />
+    <result column="LOGIN_PASSWD" property="loginPasswd" jdbcType="VARCHAR" />
+    <result column="LOCK_FLAG" property="lockFlag" jdbcType="DECIMAL" />
+    <result column="DATA_STATE" property="dataState" jdbcType="DECIMAL" />
+    <result column="CREATOR" property="creator" jdbcType="DECIMAL" />
+    <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="MODIFIER" property="modifier" jdbcType="DECIMAL" />
+    <result column="MODIFY_DATE" property="modifyDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Sys_Column_List" >
+    OP_ID, OP_NAME, OP_CODE, OP_KIND, OP_PIC, MOBILE_NO, EMAIL_ADRESS, LOGIN_CODE, LOGIN_PASSWD, 
+    LOCK_FLAG, DATA_STATE, CREATOR, CREATE_DATE, MODIFIER, MODIFY_DATE
+  </sql>
+  <!--获得opId的list集合-->
+ <!--  <resultMap id="OpIdResultMap" type="java.lang.long" >
+   	<result column="OP_ID" property="opId"  jdbcType="DECIMAL" />
+   </resultMap> -->
+  <!-- 根据opId获得SysFuncBean对象 -->
+ <select id="selectRoleMenuList"  resultMap="BaseResultMap" >
+ 	SELECT DISTINCT s.FUNC_ID, FUNC_LEVEL, FUNC_CODE, FUNC_NAME, FUNC_ORDER, FUNC_URL, FUNC_IMG,SUP_FUNC_ID,
+    CASE 
+    WHEN sr.FUNC_ID IS NOT NULL  THEN
+       '1'
+    ELSE
+       '0'
+  END AS checked
+  FROM
+    sys_func s
+  LEFT JOIN sys_role_func sr ON sr.FUNC_ID = s.FUNC_ID
+  AND sr.ROLE_ID IN (SELECT s2.ROLE_ID FROM sys_op s1,sys_op_role s2 WHERE s1.op_id=s2.op_id AND s1.op_id =#{opId})
+   <!--  WHERE sr.DATA_STATE = 1  -->
+ </select>
+ 
+ <!--通过roleid或roleName查询对应的opId-->
+ <select id="getOpIdByRoleId" resultMap="BaseResultMap">
+ 	SELECT DISTINCT OP_ID
+  	FROM sys_op_role sor
+  	LEFT JOIN sys_role sr ON 
+  	 sr.role_id = sor.role_id
+  	 WHERE sr.DATA_STATE=1
+  	 <if test="roleId != null" >
+       and sr.ROLE_ID = #{roleId,jdbcType=DECIMAL}
+      </if>
+ 	<if test="roleName != null" >
+       and ROLE_NAME = #{roleName,jdbcType=VARCHAR}
+      </if>
+ </select>
+</mapper>

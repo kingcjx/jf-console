@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<!-- 自动扫描的包 -->
+	<context:component-scan  base-package="com.atguigu.jf.console.*.service" />
+	<!-- 扫描配置文件 -->
+	<context:property-placeholder	 file-encoding="utf-8"   location="classpath:db.properties" />
+	<!-- 连接池信息 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+	<!-- 整合MyBatis-->
+	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean" >
+		<property name="dataSource" ref="dataSource"/>
+		<property name="mapperLocations" value="classpath:com/atguigu/jf/console/baseapi/*/mapper/*.xml"/>
+		<!--进行分页插件配置-->
+		<property name="typeAliasesPackage" value="com.isea533.ssm.model"/>
+  		<property name="plugins">
+    		<array>
+     			<bean class="com.github.pagehelper.PageHelper">
+        			<property name="properties">
+          				<value>
+            				dialect=mysql
+      						params=pageNum=start;pageSize=limit;
+          				</value>
+        			</property>
+      			</bean>
+   			</array>
+ 		</property>
+	</bean>
+	<bean  class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.atguigu.jf.console.baseapi.*" />
+	</bean>
+	
+	<!-- 配置事务 -->
+	<!-- 事务管理器 -->
+	<bean id="transactionManager"  class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+		
+	<!-- 配置事务的通知 -->
+	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="append*" propagation="REQUIRED" />
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="modify*" propagation="REQUIRED" />
+			<tx:method name="edit*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="remove*" propagation="REQUIRED" />
+			<tx:method name="repair" propagation="REQUIRED" />
+			<tx:method name="delAndRepair" propagation="REQUIRED" />
+
+			<tx:method name="get*" propagation="SUPPORTS" />
+			<tx:method name="find*" propagation="SUPPORTS" />
+			<tx:method name="load*" propagation="SUPPORTS" />
+			<tx:method name="search*" propagation="SUPPORTS" />
+			<tx:method name="datagrid*" propagation="SUPPORTS" />
+
+			<tx:method name="*" propagation="SUPPORTS" />
+		</tx:attributes>
+	</tx:advice>
+	<!-- 配置切面 -->
+	<aop:config>
+		<aop:pointcut id="transactionPointcut"
+			expression="execution (* com.atguigu.jf.console.*.service..*Impl.*(..))" />
+		<aop:advisor advice-ref="transactionAdvice" pointcut-ref="transactionPointcut" />
+	</aop:config>
+	
+	<!--配置Shiro -->
+	<!-- 缓存管理器 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="cacheManager" ref="cacheManager"/>
+        <property name="realm" ref="myRealm"/>
+    </bean>
+	<!-- 自定义realm -->
+	<bean id="myRealm" class="com.atguigu.jf.console.shiro.MyRleam">
+		<property name="credentialsMatcher">
+			<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+					<!--指定加密算法 -->
+				<property name="hashAlgorithmName" value="MD5"/>
+					<!--加密算法执行次数 -->
+				<property name="hashIterations" value="1024"></property>
+			</bean>
+		</property>
+	</bean>
+    <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:ehcache.xml"/> 
+    </bean>
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor"/>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+    <bean id="secureRemoteInvocationExecutor" class="org.apache.shiro.spring.remoting.SecureRemoteInvocationExecutor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+    			<!--引用上面定义的securityManager-->
+        <property name="securityManager" ref="securityManager"/>
+        			<!--定义登录的页面-->
+        <property name="loginUrl" value="/login.jsp"/>
+         <!-- 未授权的页面 -->
+        <property name="unauthorizedUrl" value="/unauthorized.jsp"/>
+        <property name="filterChainDefinitions">
+            <value>
+           		 /Logout = logout
+                /res/**=anon
+                /theme/**=anon
+                /logincontroller/login=anon
+               /logincontroller/getVerifyCodeImage=anon
+                /**=authc
+            </value>
+        </property>
+    </bean>
+    
+    <bean id="triggerService"  class="com.atguigu.jf.console.trigger.service.impl.TriggerService"/>
+    
+     <!-- start 整合quartz -->
+    <bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="triggerService" />
+	    <property name="targetMethod"  value="doIt"  />
+	</bean>
+	
+	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	    <property name="jobDetail" ref="jobDetail" />
+	    <!-- run every morning at 6 AM -->
+	    <property name="cronExpression" value="0 6 17 * * ?" />
+	</bean>
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	    <property name="triggers">
+	        <list>
+	            <ref bean="cronTrigger" />
+	        </list>
+	    </property>
+	</bean>
+	<!-- 整合quartz end -->
+</beans>

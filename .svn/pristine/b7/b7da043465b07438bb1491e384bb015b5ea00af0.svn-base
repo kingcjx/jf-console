@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.jf.console.baseapi.evaluation.EvaluationMapper" >
+ 	
+ 	<resultMap id="BaseResultMap" type="com.atguigu.jf.console.evaluation.bean.pojo.Evaluation" >
+    <result column="EVALUATION_ID" property="evaluationId"  />
+    <result column="USER_NICKNAME" property="evaluateAcount"  />
+    <result column="ITEM_NAME" property="commodityName"  />
+    <result column="ITEM_PIC_URL" property="commodityPic" />
+    <result column="EVALUATION_GRADE" property="evaluationGrade"  />
+    <result column="EVALUATION_CONTENT" property="evaluationContent" />
+    <result column="ITEM_PIC_URL" property="evaluationPic" />
+    <result column="SHOP_NAME" property="evaluationStore" />
+    <result column="EVALUATION_TIME" property="evaluationTime" />
+  </resultMap>
+ 
+ 
+  <select id="getEvaluationList" parameterType="map" resultType="com.atguigu.jf.console.evaluation.bean.pojo.Evaluation">
+ <!--  SELECT DISTINCT e.EVALUATION_ID evaluationId, u.`USER_NICKNAME` evaluateAcount,m.MCHT_NAME mcthName,
+	g.`ITEM_NAME` commodityName,
+	i.`ITEM_PIC_URL` commodityPic,
+	e.`EVALUATION_GRADE` evaluationGrade,
+	e.`EVALUATION_CONTENT` evaluationContent,
+	p.`ITEM_PIC_URL` evaluationPic,
+	s.`SHOP_NAME` evaluationStore,e.`EVALUATION_TIME` evaluationTime
+	FROM `ic_item_evaluation` e, `uc_user` u, `ic_item_picture` i, `ic_item_evaluation_pic` p,`sc_shop` s,`tc_goods` g,sc_merchant m
+	where e.DATA_STATE=1  and e.`EVALUATION_STATUS`=2 -->
+	  SELECT DISTINCT e.EVALUATION_ID evaluationId, e.`USER_NICKNAME` evaluateAcount,m.MCHT_NAME mcthName,
+	g.`ITEM_NAME` commodityName,
+	i.`ITEM_PIC_URL` commodityPic,
+	e.`EVALUATION_GRADE` evaluationGrade,
+	e.`EVALUATION_CONTENT` evaluationContent,
+	p.`ITEM_PIC_URL` evaluationPic,
+	s.`SHOP_NAME` evaluationStore,e.`EVALUATION_TIME` evaluationTime
+	FROM `ic_item_evaluation` e, `uc_user` u, `ic_item_picture` i, `ic_item_evaluation_pic` p,`sc_shop` s,`tc_goods` g,sc_merchant m
+	WHERE e.DATA_STATE=1  and e.`EVALUATION_STATUS`=2 and e.`ITEM_ID`=i.`ITEM_ID`AND e.`EVALUATION_ID`=p.`EVALUATION_ID` AND e.`SHOP_ID`=s.`SHOP_ID` AND e.`MCHT_ID`= m.`MCHT_ID`
+	<if test="mcthName != null" >
+       and m.MCHT_NAME = #{mcthName}
+      </if>
+		<if test="evaluationId != null" >
+       and e.EVALUATION_ID = #{evaluationId}
+      </if>
+		<if test="evaluationStatus != null" >
+       and e.EVALUATION_STATUS = #{evaluationStatus}
+      </if>
+		<if test="evaluateAcount != null" >
+       and u.USER_NICKNAME = #{evaluateAcount}
+      </if>
+      <if test="commodityName != null" >
+       and ITEM_NAME = #{commodityName}
+      </if>
+      <if test="commodityPic != null" >
+       and ITEM_PIC_URL = #{commodityPic}
+      </if>
+      <if test="evaluationGrade != null" >
+       and EVALUATION_GRADE = #{evaluationGrade}
+      </if>
+      <if test="evaluationContent != null" >
+      and  EVALUATION_CONTENT = #{evaluationContent}
+      </if>
+      <if test="evaluationPic != null" >
+       and ITEM_PIC_URL = #{evaluationPic}
+      </if>
+      <if test="evaluationStore != null" >
+       and SHOP_NAME = #{evaluationStore,}
+      </if>
+      <if test="evaluationTime != null" >
+       and EVALUATION_TIME = #{evaluationTi5me}
+      </if>
+      <if test="evaluationId != null" >
+       and EVALUATION_ID = #{evaluationId}
+      </if>
+  </select>
+  
+  <select id="getInfoEvaluation" parameterType="com.atguigu.jf.console.evaluation.bean.pojo.Evaluation" resultType="com.atguigu.jf.console.evaluation.bean.pojo.Evaluation">
+  	SELECT DISTINCT e.EVALUATION_ID evaluationId, u.`USER_NICKNAME` evaluateAcount, m.MCHT_NAME mcthName,
+	g.`ITEM_NAME` commodityName,
+	i.`ITEM_PIC_URL` commodityPic,
+	e.`EVALUATION_GRADE` evaluationGrade,
+	e.`EVALUATION_CONTENT` evaluationContent,
+	p.`ITEM_PIC_URL` evaluationPic,
+	s.`SHOP_NAME` evaluationStore,e.`EVALUATION_TIME` evaluationTime
+	FROM `ic_item_evaluation` e, `uc_user` u, `ic_item_picture` i, `ic_item_evaluation_pic` p,`sc_shop` s,`tc_goods` g ,sc_merchant m
+	where e.DATA_STATE=1 and e.`EVALUATION_STATUS`=2
+	<if test="mcthName != null" >
+       and m.MCHT_NAME = #{mcthName}
+      </if>
+			<if test="evaluationId != null" >
+       and e.EVALUATION_ID = #{evaluationId}
+      </if>
+		<if test="evaluationStatus != null" >
+       and e.EVALUATION_STATUS = #{evaluationStatus}
+      </if>
+		<if test="evaluateAcount != null" >
+       and u.USER_NICKNAME = #{evaluateAcount}
+      </if>
+      <if test="commodityName != null" >
+       and ITEM_NAME = #{commodityName}
+      </if>
+      <if test="commodityPic != null" >
+       and ITEM_PIC_URL = #{commodityPic}
+      </if>
+      <if test="evaluationGrade != null" >
+       and EVALUATION_GRADE = #{evaluationGrade}
+      </if>
+      <if test="evaluationContent != null" >
+      and  EVALUATION_CONTENT = #{evaluationContent}
+      </if>
+      <if test="evaluationPic != null" >
+       and ITEM_PIC_URL = #{evaluationPic}
+      </if>
+      <if test="evaluationStore != null" >
+       and s.SHOP_NAME = #{evaluationStore,}
+      </if>
+      <if test="evaluationTime != null" >
+       and EVALUATION_TIME = #{evaluationTime}
+      </if>
+      <if test="evaluationId != null" >
+       and EVALUATION_ID = #{evaluationId}
+      </if>
+	
+  </select>
+  
+  <update id="updateEvaluateStatus">
+  	UPDATE `ic_item_evaluation` SET `EVALUATION_STATUS`=1
+  </update>
+  
+</mapper>
